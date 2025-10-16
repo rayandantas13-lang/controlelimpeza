@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planejamento Semanal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 1200px;
+            width: 100%;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 20px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tbody tr:hover {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        td {
+            padding: 20px 15px;
+            color: #4a5568;
+            font-size: 0.95em;
+        }
+
+        td:first-child {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.05em;
+        }
+
+        .checkbox-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: #667eea;
+            transition: transform 0.2s ease;
+        }
+
+        input[type="checkbox"]:hover {
+            transform: scale(1.2);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input[type="date"] {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+        }
+
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            th, td {
+                padding: 12px 8px;
+                font-size: 0.85em;
+            }
+
+            input[type="checkbox"] {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #718096;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 Planejamento Semanal</h1>
+        
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Semana</th>
+                        <th>Tarefas Específicas</th>
+                        <th>Responsável</th>
+                        <th>Concluído</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Semana 1</td>
+                        <td><input type="text" placeholder="Descreva as tarefas..."></td>
+                        <td><input type="text" placeholder="Nome do responsável..."></td>
+                        <td class="checkbox-container"><input type="checkbox"></td>
+                        <td><input type="date"></td>
+                    </tr>
+                    <tr>
+                        <td>Semana 2</td>
+                        <td><input type="text" placeholder="Descreva as tarefas..."></td>
+                        <td><input type="text" placeholder="Nome do responsável..."></td>
+                        <td class="checkbox-container"><input type="checkbox"></td>
+                        <td><input type="date"></td>
+                    </tr>
+                    <tr>
+                        <td>Semana 3</td>
+                        <td><input type="text" placeholder="Descreva as tarefas..."></td>
+                        <td><input type="text" placeholder="Nome do responsável..."></td>
+                        <td class="checkbox-container"><input type="checkbox"></td>
+                        <td><input type="date"></td>
+                    </tr>
+                    <tr>
+                        <td>Semana 4</td>
+                        <td><input type="text" placeholder="Descreva as tarefas..."></td>
+                        <td><input type="text" placeholder="Nome do responsável..."></td>
+                        <td class="checkbox-container"><input type="checkbox"></td>
+                        <td><input type="date"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>✨ Organize suas tarefas semanais de forma eficiente</p>
+        </div>
+    </div>
+
+    <script>
+        // Adiciona interatividade aos checkboxes
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const row = this.closest('tr');
+                if (this.checked) {
+                    row.style.opacity = '0.6';
+                    row.style.textDecoration = 'line-through';
+                } else {
+                    row.style.opacity = '1';
+                    row.style.textDecoration = 'none';
+                }
+            });
+        });
+
+        // Salva os dados no localStorage
+        const inputs = document.querySelectorAll('input[type="text"], input[type="date"], input[type="checkbox"]');
+        inputs.forEach((input, index) => {
+            // Carrega dados salvos
+            const savedValue = localStorage.getItem(`input_${index}`);
+            if (savedValue !== null) {
+                if (input.type === 'checkbox') {
+                    input.checked = savedValue === 'true';
+                    if (input.checked) {
+                        const row = input.closest('tr');
+                        row.style.opacity = '0.6';
+                        row.style.textDecoration = 'line-through';
+                    }
+                } else {
+                    input.value = savedValue;
+                }
+            }
+
+            // Salva ao modificar
+            input.addEventListener('change', function() {
+                if (this.type === 'checkbox') {
+                    localStorage.setItem(`input_${index}`, this.checked);
+                } else {
+                    localStorage.setItem(`input_${index}`, this.value);
+                }
+            });
+
+            input.addEventListener('input', function() {
+                if (this.type !== 'checkbox') {
+                    localStorage.setItem(`input_${index}`, this.value);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
