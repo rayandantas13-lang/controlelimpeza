@@ -58,6 +58,7 @@
             overflow-x: auto;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
 
         table {
@@ -168,6 +169,30 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        .btn-add {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-add:active {
+            transform: translateY(0);
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -186,6 +211,11 @@
                 width: 20px;
                 height: 20px;
             }
+
+            .btn-add {
+                font-size: 1em;
+                padding: 12px;
+            }
         }
 
         .footer {
@@ -194,6 +224,21 @@
             color: #718096;
             font-size: 0.9em;
         }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .new-row {
+            animation: slideIn 0.4s ease-out;
+        }
     </style>
 </head>
 <body>
@@ -201,7 +246,7 @@
         <h1>📅 Planejamento Semanal</h1>
         
         <div class="table-wrapper">
-            <table>
+            <table id="planningTable">
                 <thead>
                     <tr>
                         <th>Semana</th>
@@ -211,7 +256,7 @@
                         <th>Data</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tableBody">
                     <tr>
                         <td>Semana 1</td>
                         <td><input type="text" placeholder="Descreva as tarefas..."></td>
@@ -244,14 +289,18 @@
             </table>
         </div>
 
+        <button class="btn-add" id="addWeekBtn">➕ Adicionar Nova Semana</button>
+
         <div class="footer">
             <p>✨ Organize suas tarefas semanais de forma eficiente</p>
         </div>
     </div>
 
     <script>
-        // Adiciona interatividade aos checkboxes
-        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        let weekCounter = 4;
+
+        // Função para adicionar interatividade aos checkboxes
+        function addCheckboxListener(checkbox) {
             checkbox.addEventListener('change', function() {
                 const row = this.closest('tr');
                 if (this.checked) {
@@ -261,42 +310,123 @@
                     row.style.opacity = '1';
                     row.style.textDecoration = 'none';
                 }
+                saveData();
             });
-        });
+        }
 
-        // Salva os dados no localStorage
-        const inputs = document.querySelectorAll('input[type="text"], input[type="date"], input[type="checkbox"]');
-        inputs.forEach((input, index) => {
-            // Carrega dados salvos
-            const savedValue = localStorage.getItem(`input_${index}`);
-            if (savedValue !== null) {
-                if (input.type === 'checkbox') {
-                    input.checked = savedValue === 'true';
-                    if (input.checked) {
-                        const row = input.closest('tr');
-                        row.style.opacity = '0.6';
-                        row.style.textDecoration = 'line-through';
-                    }
-                } else {
-                    input.value = savedValue;
-                }
-            }
-
-            // Salva ao modificar
-            input.addEventListener('change', function() {
-                if (this.type === 'checkbox') {
-                    localStorage.setItem(`input_${index}`, this.checked);
-                } else {
-                    localStorage.setItem(`input_${index}`, this.value);
-                }
-            });
-
+        // Função para adicionar listeners de salvamento aos inputs
+        function addSaveListeners(input) {
+            input.addEventListener('change', saveData);
             input.addEventListener('input', function() {
                 if (this.type !== 'checkbox') {
-                    localStorage.setItem(`input_${index}`, this.value);
+                    saveData();
                 }
             });
+        }
+
+        // Adiciona interatividade aos checkboxes existentes
+        document.querySelectorAll('input[type="checkbox"]').forEach(addCheckboxListener);
+        document.querySelectorAll('input[type="text"], input[type="date"]').forEach(addSaveListeners);
+
+        // Função para adicionar nova semana
+        document.getElementById('addWeekBtn').addEventListener('click', function() {
+            weekCounter++;
+            const tableBody = document.getElementById('tableBody');
+            
+            const newRow = document.createElement('tr');
+            newRow.className = 'new-row';
+            newRow.innerHTML = `
+                <td>Semana ${weekCounter}</td>
+                <td><input type="text" placeholder="Descreva as tarefas..."></td>
+                <td><input type="text" placeholder="Nome do responsável..."></td>
+                <td class="checkbox-container"><input type="checkbox"></td>
+                <td><input type="date"></td>
+            `;
+            
+            tableBody.appendChild(newRow);
+
+            // Adiciona listeners aos novos inputs
+            const newCheckbox = newRow.querySelector('input[type="checkbox"]');
+            addCheckboxListener(newCheckbox);
+            
+            newRow.querySelectorAll('input[type="text"], input[type="date"]').forEach(addSaveListeners);
+
+            saveData();
+
+            // Scroll suave até a nova linha
+            newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
+
+        // Função para salvar dados no localStorage
+        function saveData() {
+            const rows = document.querySelectorAll('#tableBody tr');
+            const data = [];
+            
+            rows.forEach((row, index) => {
+                const weekName = row.querySelector('td:first-child').textContent;
+                const tasks = row.querySelector('input[type="text"]:nth-of-type(1)').value;
+                const responsible = row.querySelector('input[type="text"]:nth-of-type(2)').value;
+                const completed = row.querySelector('input[type="checkbox"]').checked;
+                const date = row.querySelector('input[type="date"]').value;
+                
+                data.push({
+                    weekName,
+                    tasks,
+                    responsible,
+                    completed,
+                    date
+                });
+            });
+            
+            localStorage.setItem('planningData', JSON.stringify(data));
+            localStorage.setItem('weekCounter', weekCounter);
+        }
+
+        // Função para carregar dados do localStorage
+        function loadData() {
+            const savedData = localStorage.getItem('planningData');
+            const savedCounter = localStorage.getItem('weekCounter');
+            
+            if (savedCounter) {
+                weekCounter = parseInt(savedCounter);
+            }
+            
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                const tableBody = document.getElementById('tableBody');
+                
+                // Limpa a tabela
+                tableBody.innerHTML = '';
+                
+                // Recria as linhas com os dados salvos
+                data.forEach((rowData) => {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>${rowData.weekName}</td>
+                        <td><input type="text" placeholder="Descreva as tarefas..." value="${rowData.tasks}"></td>
+                        <td><input type="text" placeholder="Nome do responsável..." value="${rowData.responsible}"></td>
+                        <td class="checkbox-container"><input type="checkbox" ${rowData.completed ? 'checked' : ''}></td>
+                        <td><input type="date" value="${rowData.date}"></td>
+                    `;
+                    
+                    tableBody.appendChild(newRow);
+                    
+                    // Adiciona listeners
+                    const checkbox = newRow.querySelector('input[type="checkbox"]');
+                    addCheckboxListener(checkbox);
+                    
+                    if (rowData.completed) {
+                        newRow.style.opacity = '0.6';
+                        newRow.style.textDecoration = 'line-through';
+                    }
+                    
+                    newRow.querySelectorAll('input[type="text"], input[type="date"]').forEach(addSaveListeners);
+                });
+            }
+        }
+
+        // Carrega os dados ao iniciar
+        loadData();
     </script>
 </body>
 </html>
